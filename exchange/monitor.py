@@ -8,10 +8,14 @@ import random
 import os
 import signal
 
+lista_salas = {}
+
+
 class Monitor:
     """
         Sala monitor
     """
+
     def __init__(self, sala_id_list, port_list=None, username='Guest'):
         """
             :param sala_id_list: list of sala identifiers the monitor wants to keep track
@@ -106,6 +110,7 @@ class Monitor:
         """
             Main loop of listening salas updates
         """
+
         if self._dict:
             print("Listening...")
             while True:
@@ -121,24 +126,45 @@ class Monitor:
         """
             Visualize updates on console
         """
-        no_dash = 36
+        global lista_salas
+
+        no_dash = 70
         os.system('cls' if os.name == 'nt' else 'clear')
         print("USERNAME: %s" % (self._username))
         print("Monitoring: %s;" % (", ".join(list(self._dict.keys()))))
         print("-"*no_dash)
-        print("NAME\t\tVALUE\t\tVAR")
+        print("NOME\t   TEMP \t   VAR\t\tMÉDIA\t\tDATA")
         print("-"*no_dash)
         for key, value in self._dict.items():
             if value['data'] and value['variation'] is not None:
-                l1 = len("$ %.2f" %  value['data'].get_value())
+
+                if key not in lista_salas:
+                    lista_salas.setdefault(key, [])
+        
+                if len(lista_salas[key]) == 10:
+                    lista_salas[key].pop(0)
+                lista_salas[key].append(value['data'].get_value())
+                
+                media = sum(lista_salas[key])/len(lista_salas[key])
+
+                # if len(lista_salas[key]) == 10:
+                #     print(key, media)
+
+                l1 = len("%.2f ºC" %  value['data'].get_value() )
                 if value['variation'] < 0:
                     l2 = len("%.2f%%" % value['variation'])
                     _white_space = no_dash - l1 - len(key) - 13 - l2
-                    print("%s\t\t$ %.2f%s%2.2f%%" % (key, value['data'].get_value(), " "*_white_space, value['variation']))
+                    if len(lista_salas[key]) == 10:
+                        print("%s\t %.2f ºC\t %2.2f%% ºC \t %2.2fºC" % (key, value['data'].get_value(), value['variation'], media))
+                    else:
+                        print("%s\t %.2f ºC\t %2.2f%% ºC" % (key, value['data'].get_value(), value['variation']))
                 else:
                     l2 = len("+%.2f%%" % value['variation'])
                     _white_space = no_dash - l1 - len(key) - 13 - l2
-                    print("%s\t\t$ %.2f%s+%2.2f%%" % (key, value['data'].get_value(), " "*_white_space, value['variation']))
+                    if len(lista_salas[key]) == 10:
+                        print("%s\t %.2f ºC\t +%2.2f%% ºC \t %2.2fºC" % (key, value['data'].get_value(), value['variation'], media))
+                    else:
+                        print("%s\t %.2f ºC\t +%2.2f%% ºC" % (key, value['data'].get_value(), value['variation']))
         print()
 
     def get_dict(self):
