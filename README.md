@@ -37,7 +37,19 @@ $ python manager.py
 ```sh
 $ python subscriber.py username [id_sala]
 ```
-Obs: é possível monitorar mais de uma sala simultaneamente passando-as por parâmetro.
+
+#### Observação: 
+É possível monitorar mais de uma sala simultaneamente passando-as por parâmetro.
+
+- Salas disponíveis:
+  - LE1
+  - LE2
+  - LE3
+  - LE4
+  - LE5
+  - LE6
+  - LE7
+  - LE8
 
 ----------------------------------------------------------------------
 **Mariana Cavichioli Silva - 726568**
