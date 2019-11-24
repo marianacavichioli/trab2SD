@@ -7,6 +7,7 @@ from config import (ADDR, SYSTEM_LISTEN_PORT, SYSTEM_CREATE_MONITOR)
 import random
 import os
 import signal
+from datetime import datetime
 
 lista_salas = {}
 
@@ -128,6 +129,8 @@ class Monitor:
         """
         global lista_salas
 
+        
+
         no_dash = 70
         os.system('cls' if os.name == 'nt' else 'clear')
         print("USERNAME: %s" % (self._username))
@@ -138,6 +141,9 @@ class Monitor:
         for key, value in self._dict.items():
             if value['data'] and value['variation'] is not None:
 
+                now = datetime.now()
+                dateTimeObj = datetime.now()
+
                 if key not in lista_salas:
                     lista_salas.setdefault(key, [])
         
@@ -147,22 +153,19 @@ class Monitor:
                 
                 media = sum(lista_salas[key])/len(lista_salas[key])
 
-                # if len(lista_salas[key]) == 10:
-                #     print(key, media)
-
                 l1 = len("%.2f ºC" %  value['data'].get_value() )
                 if value['variation'] < 0:
                     l2 = len("%.2f%%" % value['variation'])
                     _white_space = no_dash - l1 - len(key) - 13 - l2
                     if len(lista_salas[key]) == 10:
-                        print("%s\t %.2f ºC\t %2.2f%% ºC \t %2.2fºC" % (key, value['data'].get_value(), value['variation'], media))
+                        print("%s\t %.2f ºC\t %2.2f%% ºC \t %2.2fºC \t" % (key, value['data'].get_value(), value['variation'], media) + str(dateTimeObj))
                     else:
                         print("%s\t %.2f ºC\t %2.2f%% ºC" % (key, value['data'].get_value(), value['variation']))
                 else:
                     l2 = len("+%.2f%%" % value['variation'])
                     _white_space = no_dash - l1 - len(key) - 13 - l2
                     if len(lista_salas[key]) == 10:
-                        print("%s\t %.2f ºC\t +%2.2f%% ºC \t %2.2fºC" % (key, value['data'].get_value(), value['variation'], media))
+                        print("%s\t %.2f ºC\t +%2.2f%% ºC \t %2.2fºC \t" % (key, value['data'].get_value(), value['variation'], media) + str(dateTimeObj))
                     else:
                         print("%s\t %.2f ºC\t +%2.2f%% ºC" % (key, value['data'].get_value(), value['variation']))
         print()
