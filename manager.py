@@ -24,21 +24,6 @@ def modify_value(manager):
                 manager.get_curr_value() + random.uniform(-0.1, 0.1)
             )
 
-
-""" SALA EXAMPLES
-
-    Bovespa Index 
-            101.339,68  +0,37%
-    Dow Jones
-            26.717,43   +0,44%
-    Nasdaq Composite
-            8.091,1624  +1,06%
-    FTSE 100
-            7.497,5 +0,97%
-    DAX Index
-            12.521,38   +0,99%
-"""
-
 def main(item):
     # Creating some examples of salas
     sala_le1 = Manager("Laboratório Educacional 1", "LE1", 23)
