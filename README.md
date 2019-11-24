@@ -28,17 +28,17 @@ $ python world.py
 $ python start_sensores.py
 ```
 
-### No terceiro terminal
+#### No terceiro terminal
 ```sh
 $ python manager.py
 ```
 
-### No quarto terminal
+#### No quarto terminal
 ```sh
 $ python subscriber.py username [id_sala]
 ```
 
-#### Observação: 
+### Observação: 
 É possível monitorar mais de uma sala simultaneamente passando-as por parâmetro.
 
 - Salas disponíveis:
