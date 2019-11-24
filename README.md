@@ -1,6 +1,13 @@
 # Segundo trabalho da disciplina de Sistemas Distribuídos
 
-Este trabalho tem o objetivo de desenvolver um sistema em python que implemente uma espaço de dados compartilhado persistente, nos moldes do Linda Tuplespace (com as operações in, rd e out) que permita a implementação de um mini-blog com postagens de conteúdos por tópicos, sua leitura por tópicos e a retirada da mensagem somente por quem postou. Além disso, tem o objetivo de escrever um wrapper usando REST api neste sistema que permita a conexão de clientes remotos a este microblog se conectarem  através de REST. 
+Este trabalho tem o objetivo de desenvolver um sistema em python de coleta e monitoramenfo de temperatura para todas salas do DC.
+
+## Passos
+- Construa um nó coletor de dados (processo) (simule a variação de temperatura) que colete dados a cada segundo,
+- Empacote os dados em um envelope (xml ou json), e publique em um broker (ZeroMQ) (topico = temp, n.sala).
+- Crie processos recipientes (pelo menos 1 para cada coletor) ("subscribers" do topico) responsáveis por armazenar a média  das últimas 10 leituras em formato "log historico" <sala n, time stamp, temp>.
+- Monitore monitore um minimo de 8 salas. Publicadores e consumidores (subscribers)  devem rodar em maquinas diferentes.
+- Ao final do projeto crie um cliente de visualização da temperatura das salas, incluindo histórico  (gráfico ou txt).
 
 ## Instruções
 
@@ -30,7 +37,7 @@ $ python manager.py
 ```sh
 $ python subscriber.py username [id_sala]
 ```
-Obs: é possível visualizar mais de uma sala simultaneamente passando-as por parâmetro.
+Obs: é possível monitorar mais de uma sala simultaneamente passando-as por parâmetro.
 
 ----------------------------------------------------------------------
 **Mariana Cavichioli Silva - 726568**
