@@ -10,12 +10,12 @@ from exchange.sensor import Sensor
 
 class Subscriber:
     """
-        Client that monitors salas
+        Client that monitors rooms
         Every subscriber has one monitor and one only
     """
     def __init__(self, username=None, sala_id_list=None):
         """
-            :param sala_id_list: list of sala IDs that this client wants to subscribe for
+            :param sala_id_list: list of room IDs that this client wants to subscribe for
         """
         self._id_list = sala_id_list
         self._username = username
@@ -47,12 +47,12 @@ class Subscriber:
 
 class Manager:
     """
-        Sala manager.
-        Every sala manager manages one sala and one only
+        Room manager.
+        Every room manager manages one room and one only
     """
     def __init__(self, sala_name, sala_id, sala_val):
         """
-            :param sala_val: Current value of a sala in dollars
+            :param sala_val: Current value of a room temperature in ºC
         """
         self._my_sala = Sala(name=sala_name, id_sala=sala_id, val=sala_val)
         self._context = zmq.Context()
@@ -63,20 +63,20 @@ class Manager:
 
     def update_value(self, sala_value):
         """
-            Update the current value of this manager's sala
-            :param sala_value: new value for a sala
+            Update the current value of this manager's room
+            :param sala_value: new value for a room
         """
         self._my_sala.set_value(sala_value)
 
     def get_curr_value(self):
         """
-            Get sala's current value
+            Get room's current value
         """
         return self._my_sala.get_value()
 
     def send_sala(self):
         """
-            Send sala to broker
+            Send room to broker
         """
         self._socket.send_multipart(
             [str(self._my_sala.get_id()).encode(), self._my_sala.marshal()]

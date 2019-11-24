@@ -15,14 +15,14 @@ class Sensor:
     """
     def __init__(self, sala_id=None):
         """
-            :param sala_id: sala id to be responsible with
+            :param sala_id: room id to be responsible with
         """
         self._sensor_id = random.randrange(1,10005)
 
         # BROKER -> SENSOR
         self._context = zmq.Context()
 
-        # Subscribe to a sala
+        # Subscribe to a room
         self._socket_in = self._context.socket(zmq.SUB)
         self._socket_in.connect("tcp://%s:%s" % (ADDR, BROKER_OUT_PORT))
         self._socket_in.setsockopt_string(zmq.SUBSCRIBE, sala_id)
@@ -34,7 +34,7 @@ class Sensor:
         _socket_world.send_string(sala_id)
         self._my_port = _socket_world.recv_string()
 
-        # Publishes a sala for monitors
+        # Publishes a room for monitors
         self._socket_out = self._context.socket(zmq.PUB)
         self._socket_out.bind("tcp://%s:%s" % (ADDR, self._my_port))
 
@@ -42,7 +42,7 @@ class Sensor:
 
     def _listen(self):
         """
-            Receive sala updates
+            Receive room updates
         """
         while True:
             [_, raw_data] = self._socket_in.recv_multipart()
@@ -53,7 +53,7 @@ class Sensor:
 
     def _update(self):
         """
-            Send sala current state each at second
+            Send room current state each at second
         """
         while True:
             if self._sala is not None:

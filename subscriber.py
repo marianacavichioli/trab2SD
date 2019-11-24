@@ -1,12 +1,6 @@
 from exchange.user import Subscriber
 from sys import argv
 
-"""
-To run this code use:
-
-python3 subscriber.py username [sala1] [sala2] .. [salaN]
-
-"""
 
 def main(sala=None):
     # Setting default values
@@ -20,7 +14,7 @@ def main(sala=None):
     if len(sala) > 1:
         user = sala[1]
 
-    # Getting which salas it wants to monitor
+    # Getting which rooms it wants to monitor
     if len(sala) > 2:
         for i in range(2,len(sala)):
             list_sala.append(sala[i])

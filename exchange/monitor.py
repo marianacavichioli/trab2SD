@@ -14,12 +14,12 @@ lista_salas = {}
 
 class Monitor:
     """
-        Sala monitor
+        Room monitor
     """
 
     def __init__(self, sala_id_list, port_list=None, username='Guest'):
         """
-            :param sala_id_list: list of sala identifiers the monitor wants to keep track
+            :param sala_id_list: list of rooms identifiers the monitor wants to keep track
             :param port_list: (optional) list of ports for an existing monitor
             :param username: (optional) subscriber's username
         """
@@ -58,7 +58,7 @@ class Monitor:
                 for _, port in self._ports.items():
                     self._socket.connect("tcp://%s:%s" % (ADDR, port))
 
-                # Subscribe to all sala IDs
+                # Subscribe to all room IDs
                 for sala_id in ordered_ids:
                     self._socket.setsockopt_string(zmq.SUBSCRIBE, sala_id)
                     self._dict[sala_id] = {
@@ -68,11 +68,11 @@ class Monitor:
                     }
             else:
                 # Neither of the subscribed ports exists
-                print("[MNT] Sala don't exist :(")
+                print("[MNT] Room doesn't exist")
 
         else:
             # Routine for reusing an existing monitor
-            # (uses the same sala-sensor port relation)
+            # (uses the same room-sensor port relation)
 
             self._ports = port_list
             for port in port_list:
@@ -89,8 +89,8 @@ class Monitor:
 
     def _update_sala(self, obj):
         """
-            Create/Updates an existing sala
-            :param obj: Sala object (or a list of sala)
+            Create/Updates an existing room
+            :param obj: Sala object (or a list of room)
         """
         if isinstance(obj, list):
             for sala in obj:
@@ -109,7 +109,7 @@ class Monitor:
 
     def listen(self):
         """
-            Main loop of listening salas updates
+            Main loop of listening rooms updates
         """
 
         if self._dict:
@@ -128,8 +128,6 @@ class Monitor:
             Visualize updates on console
         """
         global lista_salas
-
-        
 
         no_dash = 70
         os.system('cls' if os.name == 'nt' else 'clear')
