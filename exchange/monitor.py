@@ -10,16 +10,17 @@ import signal
 from datetime import datetime
 
 lista_salas = {}
+cabecalho = {}
 
 
 class Monitor:
     """
-        Room monitor
+        Sala monitor
     """
 
     def __init__(self, sala_id_list, port_list=None, username='Guest'):
         """
-            :param sala_id_list: list of rooms identifiers the monitor wants to keep track
+            :param sala_id_list: list of sala identifiers the monitor wants to keep track
             :param port_list: (optional) list of ports for an existing monitor
             :param username: (optional) subscriber's username
         """
@@ -58,7 +59,7 @@ class Monitor:
                 for _, port in self._ports.items():
                     self._socket.connect("tcp://%s:%s" % (ADDR, port))
 
-                # Subscribe to all room IDs
+                # Subscribe to all sala IDs
                 for sala_id in ordered_ids:
                     self._socket.setsockopt_string(zmq.SUBSCRIBE, sala_id)
                     self._dict[sala_id] = {
@@ -68,11 +69,11 @@ class Monitor:
                     }
             else:
                 # Neither of the subscribed ports exists
-                print("[MNT] Room doesn't exist")
+                print("[MNT] Sala don't exist :(")
 
         else:
             # Routine for reusing an existing monitor
-            # (uses the same room-sensor port relation)
+            # (uses the same sala-sensor port relation)
 
             self._ports = port_list
             for port in port_list:
@@ -89,8 +90,8 @@ class Monitor:
 
     def _update_sala(self, obj):
         """
-            Create/Updates an existing room
-            :param obj: Sala object (or a list of room)
+            Create/Updates an existing sala
+            :param obj: Sala object (or a list of sala)
         """
         if isinstance(obj, list):
             for sala in obj:
@@ -109,7 +110,7 @@ class Monitor:
 
     def listen(self):
         """
-            Main loop of listening rooms updates
+            Main loop of listening salas updates
         """
 
         if self._dict:
@@ -128,6 +129,7 @@ class Monitor:
             Visualize updates on console
         """
         global lista_salas
+        global cabecalho
 
         no_dash = 70
         os.system('cls' if os.name == 'nt' else 'clear')
@@ -136,11 +138,25 @@ class Monitor:
         print("-"*no_dash)
         print("NOME\t   TEMP \t   VAR\t\tMÉDIA\t\tDATA")
         print("-"*no_dash)
+
         for key, value in self._dict.items():
             if value['data'] and value['variation'] is not None:
 
                 now = datetime.now()
                 dateTimeObj = datetime.now()
+
+                file2write=open(key,'a')
+
+                if key not in cabecalho:
+                    cabecalho.setdefault(key, False)
+
+                if cabecalho[key] == False:
+                    file2write.write("-"*no_dash)
+                    file2write.write("\n")
+                    file2write.write("NOME\t   TEMP \t   VAR\t\tMÉDIA\t\tDATA\n")
+                    file2write.write("-"*no_dash)
+                    file2write.write("\n")
+                    cabecalho[key] = True
 
                 if key not in lista_salas:
                     lista_salas.setdefault(key, [])
@@ -157,15 +173,19 @@ class Monitor:
                     _white_space = no_dash - l1 - len(key) - 13 - l2
                     if len(lista_salas[key]) == 10:
                         print("%s\t %.2f ºC\t %2.2f%% ºC \t %2.2fºC \t" % (key, value['data'].get_value(), value['variation'], media) + str(dateTimeObj))
+                        file2write.write("%s\t %.2f ºC\t %2.2f%% ºC \t %2.2fºC \t" % (key, value['data'].get_value(), value['variation'], media) + str(dateTimeObj) + "\n")
                     else:
                         print("%s\t %.2f ºC\t %2.2f%% ºC" % (key, value['data'].get_value(), value['variation']))
+
                 else:
                     l2 = len("+%.2f%%" % value['variation'])
                     _white_space = no_dash - l1 - len(key) - 13 - l2
                     if len(lista_salas[key]) == 10:
                         print("%s\t %.2f ºC\t +%2.2f%% ºC \t %2.2fºC \t" % (key, value['data'].get_value(), value['variation'], media) + str(dateTimeObj))
+                        file2write.write("%s\t %.2f ºC\t +%2.2f%% ºC \t %2.2fºC \t" % (key, value['data'].get_value(), value['variation'], media) + str(dateTimeObj) + "\n")
                     else:
                         print("%s\t %.2f ºC\t +%2.2f%% ºC" % (key, value['data'].get_value(), value['variation']))
+
         print()
 
     def get_dict(self):

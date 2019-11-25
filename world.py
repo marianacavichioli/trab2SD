@@ -4,25 +4,32 @@ from config import (ADDR, SYSTEM_LISTEN_PORT, SYSTEM_UPDATE_PORT, SYSTEM_CREATE_
 from threading import Thread
 import zmq, json
 
+"""
+To run this code use:
+
+python3 world.py
+
+"""
+
 class SalaSystem:
     """
         Main system
         Runs a Broker;
-        Manages room-sensor port relations;
+        Manages sala-sensor port relations;
         Manages existing monitors
     """
     def __init__(self):
         self._bkr = Broker()        # Broker object
-        self._sala_port = {}         # room-sensor port relations
+        self._sala_port = {}         # sala-sensor port relations
         self._monitors = {}         # Created monitors and it's subscribed woker ports
 
         self._context = zmq.Context()
         
-        # Request-reply for update room-sensor port relations
+        # Request-reply for update sala-sensor port relations
         self._socket_update = self._context.socket(zmq.REP)
         self._socket_update.bind("tcp://%s:%s" % (ADDR, SYSTEM_UPDATE_PORT))
 
-        # Request-reply for getting all room-sensor port relations
+        # Request-reply for getting all sala-sensor port relations
         self._socket_listen = self._context.socket(zmq.REP)
         self._socket_listen.bind("tcp://%s:%s" % (ADDR, SYSTEM_LISTEN_PORT))
 
@@ -71,7 +78,7 @@ class SalaSystem:
 
             self._socket_update.send_string(str(new_port))
             
-    # Gives the correct port for each specified room 
+    # Gives the correct port for each specified sala 
     def _listen(self):
         while True:
             raw_data = self._socket_listen.recv_multipart()
@@ -85,7 +92,7 @@ class SalaSystem:
             if ports:
                 self._socket_listen.send_json(ports)
             else:
-                self._socket_listen.send_json({'error': 'room not found'})
+                self._socket_listen.send_json({'error': 'sala not found'})
 
     # Each world action is running in a thread
     def start(self):

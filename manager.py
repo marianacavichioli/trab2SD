@@ -7,6 +7,12 @@ from random import randint
 from time import sleep
 from threading import Thread
 
+"""
+To run this code use:
+
+python3 manager.py
+
+"""
 
 # Function that update the manager's value randomly with a percentage (positive or negative)
 def modify_value(manager):
@@ -19,8 +25,7 @@ def modify_value(manager):
             )
 
 def main(item):
-
-    # Creating some examples of rooms
+    # Creating some examples of salas
     sala_le1 = Manager("Laboratório Educacional 1", "LE1", 23)
     sala_le2 = Manager("Laboratório Educacional 2", "LE2", 22)
     sala_le3 = Manager("Laboratório Educacional 3", "LE3", 20)
@@ -30,7 +35,7 @@ def main(item):
     sala_le7 = Manager("Laboratório Educacional 7", "LE7", 18)
     sala_le8 = Manager("Laboratório Educacional 8", "LE8", 21)
 
-    # Each room will be constantly updated in a thread
+    # Each sala will be constantly updated in a thread
     thread_le1 = Thread(target=modify_value, args=(sala_le1,))
     thread_le2 = Thread(target=modify_value, args=(sala_le2,))
     thread_le3 = Thread(target=modify_value, args=(sala_le3,))
@@ -40,6 +45,7 @@ def main(item):
     thread_le7 = Thread(target=modify_value, args=(sala_le7,))
     thread_le8 = Thread(target=modify_value, args=(sala_le8,))
     
+
     thread_le1.start()
     thread_le2.start()
     thread_le3.start()

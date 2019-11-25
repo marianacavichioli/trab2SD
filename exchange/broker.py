@@ -9,7 +9,7 @@ from config import (BROKER_IN_PORT, BROKER_OUT_PORT, ADDR)
 
 class Broker:
     """
-        Broker device for distributing manager messages to their sensors
+        Broker device for distributing manager messages to their sensorer
         'device' on https://learning-0mq-with-pyzmq.readthedocs.io/en/latest/pyzmq/pyzmqdevices/streamer.html
     """
     def __init__(self):
