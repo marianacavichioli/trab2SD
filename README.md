@@ -50,6 +50,8 @@ $ python subscriber.py username [id_sala]
   - LE6
   - LE7
   - LE8
+  
+Também será gerado um arquivo para cada sala com o histórico de atualizações de temperaturas.
 
 ----------------------------------------------------------------------
 **Mariana Cavichioli Silva - 726568**
