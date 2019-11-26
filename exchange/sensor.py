@@ -10,31 +10,31 @@ from config import (ADDR, BROKER_OUT_PORT, SYSTEM_UPDATE_PORT)
 
 class Sensor:
     """
-        Sensor object
-        Every sensor has one sala and one only
+        Objeto sensor
+        Cada sensor tem apenas uma sala
     """
     def __init__(self, sala_id=None):
         """
-            :param sala_id: sala id to be responsible with
+            :param sala_id: id da sala
         """
         self._sensor_id = random.randrange(1,10005)
 
         # BROKER -> SENSOR
         self._context = zmq.Context()
 
-        # Subscribe to a sala
+        # Subscribe em uma sala
         self._socket_in = self._context.socket(zmq.SUB)
         self._socket_in.connect("tcp://%s:%s" % (ADDR, BROKER_OUT_PORT))
         self._socket_in.setsockopt_string(zmq.SUBSCRIBE, sala_id)
         
-        # Request-reply to give this sensor a port
+        # Request-reply para dar uma porta a este sensor
         _socket_world = self._context.socket(zmq.REQ)
         _socket_world.connect("tcp://%s:%s" % (ADDR, SYSTEM_UPDATE_PORT))
 
         _socket_world.send_string(sala_id)
         self._my_port = _socket_world.recv_string()
 
-        # Publishes a sala for monitors
+        # Publica uma sala para monitores
         self._socket_out = self._context.socket(zmq.PUB)
         self._socket_out.bind("tcp://%s:%s" % (ADDR, self._my_port))
 
@@ -42,7 +42,7 @@ class Sensor:
 
     def _listen(self):
         """
-            Receive sala updates
+            Recebe atualizações da sala
         """
         while True:
             [_, raw_data] = self._socket_in.recv_multipart()
@@ -53,7 +53,7 @@ class Sensor:
 
     def _update(self):
         """
-            Send sala current state each at second
+            Enviar estado atual da sala cada por segundo
         """
         while True:
             if self._sala is not None:
@@ -64,7 +64,7 @@ class Sensor:
 
     def work(self):
         """
-            Main loop for running this sensor
+            Main loop para rodar o sensor
         """
         update_thr = Thread(target=self._update)
 

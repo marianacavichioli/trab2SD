@@ -4,7 +4,7 @@ from json import (dumps, loads)
 
 def create_sala_json(json):
     """
-        Converts a JSON representation to a Sala object
+        Converte uma representação JSON em um objeto Sala
     """
     return Sala(
         name=json["name"],
@@ -14,8 +14,8 @@ def create_sala_json(json):
 
 def marshal(sala):
     """
-        Transforms an object into a byte JSON representation
-        :param sala: Representation of a sala
+        Transforma um objeto em uma representação JSON de byte
+        : param sala: Representação de uma sala
     """
     if isinstance(sala, Sala):
         return marshal({
@@ -28,8 +28,8 @@ def marshal(sala):
 
 def unmarshal(d_json):
     """
-        Transforms an a byte JSON representation into a JSON representation
-        :param sala: Representation of a sala
+        Transforma uma representação JSON de byte em uma representação JSON
+        :param sala: Representação de uma sala
     """
     if isinstance(d_json, str):
         return loads(d_json)
@@ -42,9 +42,9 @@ class Sala:
     """
     def __init__(self, name, id_sala, val):
         """
-            :param id_sala: Sala identifier
-            :param name: Sala name
-            :param val: Initial sala value
+            :param id_sala: Identificador de Sala
+            :param name: Nome da Sala
+            :param val: Valor inicial da sala
         """
         self._id = id_sala
         self._name = name
@@ -65,7 +65,7 @@ class Sala:
 
     def marshal(self):
         """
-            Transforms this sala to to a byte JSON representation
+            Transforma essa sala em uma representação JSON de byte
         """
         return marshal(self)
 

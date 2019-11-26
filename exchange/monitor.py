@@ -20,27 +20,26 @@ class Monitor:
 
     def __init__(self, sala_id_list, port_list=None, username='Guest'):
         """
-            :param sala_id_list: list of sala identifiers the monitor wants to keep track
-            :param port_list: (optional) list of ports for an existing monitor
-            :param username: (optional) subscriber's username
+            :param sala_id_list: lista de identificadores de sala que o monitor deseja acompanhar
+            :param port_list: (opcional) lista de portas para um monitor existente
+            :param username: (opcional) subscriber's username
         """
         self._id = -1
 
-        self._dict =  {}    # Contains all subscribed salas informations
+        self._dict =  {}    # Contém todas as informações de salas inscritas
         self._context = zmq.Context()
 
-        # Monitor subscribing to broker's backend
         self._socket = self._context.socket(zmq.SUB)
         self._username = username
         
         if port_list is None:
-            # Routine for creating a monitor
+            # Rotina para criar um monitor
 
-            # Request-reply for creating a monitor
+            # Request-reply para criar um monitor
             _socket_register_monitor = self._context.socket(zmq.REQ)
             _socket_register_monitor.connect("tcp://%s:%s" % (ADDR, SYSTEM_CREATE_MONITOR))
 
-            # Request-reply for getting all sala-sensor port relations
+            # Request-reply para obter todas as relações de porta da sala-sensor
             _socket_world = self._context.socket(zmq.REQ)
             _socket_world.connect("tcp://%s:%s" % (ADDR, SYSTEM_LISTEN_PORT))
 
@@ -48,38 +47,38 @@ class Monitor:
             self._ports = _socket_world.recv_json()
 
             if 'error' not in self._ports:
-                # At least one subscribed port exists
+                # Existe pelo menos uma porta registrada
                 ordered_ids = list(self._ports.keys())
                 ordered_ids.sort()
                 self._monitor_id = "_".join(ordered_ids)
 
-                # Register a monitor to system
+                # Registrar um monitor no sistema
                 _socket_register_monitor.send_string(self._monitor_id)
                 
                 for _, port in self._ports.items():
                     self._socket.connect("tcp://%s:%s" % (ADDR, port))
 
-                # Subscribe to all sala IDs
+                # Inscrever-se para todos os IDs de sala
                 for sala_id in ordered_ids:
                     self._socket.setsockopt_string(zmq.SUBSCRIBE, sala_id)
                     self._dict[sala_id] = {
                         "data": None,           # sala object
-                        "old": None,            # Old value
-                        "variation": None          # Variation in %
+                        "old": None,            # valor antigo
+                        "variation": None       # Variação
                     }
             else:
-                # Neither of the subscribed ports exists
-                print("[MNT] Sala don't exist :(")
+                # Nenhuma das portas inscritas existe
+                print("[MNT] Room don't exist :(")
 
         else:
-            # Routine for reusing an existing monitor
-            # (uses the same sala-sensor port relation)
+            # Rotina para reutilizar um monitor existente
+            # (usa a mesma relação de porta sala-sensor)
 
             self._ports = port_list
             for port in port_list:
                 self._socket.connect("tcp://%s:%s" % (ADDR, port))
             
-            # Subscribe to all sala IDs
+            # Inscrever-se para todos os IDs de sala
             for sala_id in sala_id_list:
                 self._socket.setsockopt_string(zmq.SUBSCRIBE, sala_id)
                 self._dict[sala_id] = {
@@ -90,8 +89,8 @@ class Monitor:
 
     def _update_sala(self, obj):
         """
-            Create/Updates an existing sala
-            :param obj: Sala object (or a list of sala)
+            Create/Updates uma sala existente
+            :param obj: Sala object (ou una lista de salas)
         """
         if isinstance(obj, list):
             for sala in obj:
@@ -110,7 +109,7 @@ class Monitor:
 
     def listen(self):
         """
-            Main loop of listening salas updates
+            Main loop para monitorar atualizações das salas
         """
 
         if self._dict:
@@ -121,12 +120,12 @@ class Monitor:
                 sala_id = _id.decode()
                 self._update_sala(sala)
                 
-                # Visualize updates
+                # Visualização de atualizações
                 self.show_in_terminal()
 
     def show_in_terminal(self):
         """
-            Visualize updates on console
+            Visualização atualizações no console
         """
         global lista_salas
         global cabecalho

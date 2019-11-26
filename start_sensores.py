@@ -2,16 +2,10 @@
 from exchange.sensor import Sensor
 from threading import Thread
 
-"""
-To run this code use:
-
-python3 start_sensores.py
-
-"""
 
 def main():
-    # Each sala has a sensor 
-    # Creating sensores for our examples
+    
+    # Cada sala possui um sensor 
     sensor_le1 = Sensor("LE1")
     sensor_le2 = Sensor("LE2")
     sensor_le3 = Sensor("LE3")
@@ -21,7 +15,7 @@ def main():
     sensor_le7 = Sensor("LE7")
     sensor_le8 = Sensor("LE8")
 
-    # Each sensor will be running in a thread
+    # Cada sensor estará rodando em uma thread
     thread_LE1 = Thread(target=sensor_le1.work)
     thread_LE2 = Thread(target=sensor_le2.work)
     thread_LE3 = Thread(target=sensor_le3.work)

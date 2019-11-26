@@ -4,48 +4,42 @@ from config import (ADDR, SYSTEM_LISTEN_PORT, SYSTEM_UPDATE_PORT, SYSTEM_CREATE_
 from threading import Thread
 import zmq, json
 
-"""
-To run this code use:
-
-python3 world.py
-
-"""
 
 class SalaSystem:
     """
         Main system
-        Runs a Broker;
-        Manages sala-sensor port relations;
-        Manages existing monitors
+        Roda o Broker;
+        Gerencia as relações de porta sala-sensor;
+        Gerencia monitores existentes
     """
     def __init__(self):
-        self._bkr = Broker()        # Broker object
-        self._sala_port = {}         # sala-sensor port relations
-        self._monitors = {}         # Created monitors and it's subscribed woker ports
+        self._bkr = Broker()        
+        self._sala_port = {}        
+        self._monitors = {}         
 
         self._context = zmq.Context()
         
-        # Request-reply for update sala-sensor port relations
+        # Request-reply para atualizar relações de porta sala-sensor
         self._socket_update = self._context.socket(zmq.REP)
         self._socket_update.bind("tcp://%s:%s" % (ADDR, SYSTEM_UPDATE_PORT))
 
-        # Request-reply for getting all sala-sensor port relations
+        # Request-reply para obter todas as relações de porta da sala-sensor
         self._socket_listen = self._context.socket(zmq.REP)
         self._socket_listen.bind("tcp://%s:%s" % (ADDR, SYSTEM_LISTEN_PORT))
 
 
-        self._sensor_ports = range(SENSOR_01, SENSOR_20)    # All possible sensor ports
+        self._sensor_ports = range(SENSOR_01, SENSOR_20)    # Todas as portas possíveis do sensor
         self._sensor_index = 0
 
-        # Request-reply for creating and registrating a monitor
+        # Request-reply para criar e registrar um monitor
         self._socket_create_monitor = self._context.socket(zmq.REP)
         self._socket_create_monitor.bind("tcp://%s:%s" % (ADDR, SYSTEM_CREATE_MONITOR))
 
-        # Request-reply for informing if a given monitor already exists
+        # Solicitar resposta para informar se já existe um monitor
         self._socket_exists_monitor = self._context.socket(zmq.REP)
         self._socket_exists_monitor.bind("tcp://%s:%s" % (ADDR, SYSTEM_EXISTS_MONITOR))
 
-    # Verify if it already exists a similar monitor and reuses it
+    # Verifique se já existe um monitor semelhante e reutilize-o
     def _exists_monitor(self):
         while True:
             monitor_id = self._socket_exists_monitor.recv_string()
@@ -54,7 +48,7 @@ class SalaSystem:
             else:
                 self._socket_exists_monitor.send_json({"error": "Monitor does not exists"})
 
-    # Create a new monitor with the specified sala list and the correct sensor port
+    # Crie um novo monitor com a lista de salas especificada e a porta correta do sensor
     def _create_monitor(self):
         while True:
             monitor_id = self._socket_create_monitor.recv_string()
@@ -66,7 +60,7 @@ class SalaSystem:
                 self._monitors[monitor_id] = sensores_port
                 self._socket_create_monitor.send_json({"success": "Monitor Created"})
 
-    # Gives a port to a new sensor
+    # Fornece uma porta para um novo sensor
     def _update(self):
         while True:
             sala_id = self._socket_update.recv_string()
@@ -78,7 +72,7 @@ class SalaSystem:
 
             self._socket_update.send_string(str(new_port))
             
-    # Gives the correct port for each specified sala 
+    # Fornece a porta correta para cada sala especificada
     def _listen(self):
         while True:
             raw_data = self._socket_listen.recv_multipart()
@@ -94,7 +88,7 @@ class SalaSystem:
             else:
                 self._socket_listen.send_json({'error': 'sala not found'})
 
-    # Each world action is running in a thread
+    # Cada ação mundial está sendo executada em uma thread
     def start(self):
         thr_update_port = Thread(target=self._update)
         thr_listen_port = Thread(target=self._listen)
